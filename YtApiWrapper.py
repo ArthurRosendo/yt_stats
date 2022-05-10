@@ -1,3 +1,6 @@
+import json
+import os.path
+
 from googleapiclient.discovery import build
 from datetime import datetime, timedelta, timezone
 from googleapiclient.errors import HttpError
@@ -6,6 +9,7 @@ from googleapiclient.errors import HttpError
 class YtApiWrapper:
 
     # region Quota management vars
+    PATH_FILE_TOKEN = "search_token.json"
     PATH_FILE_QUOTA = "current_quota.txt"
     current_quota = 0
     QUOTA_MAX = 10000
@@ -17,12 +21,30 @@ class YtApiWrapper:
         self.api_key = _api_key  # open("yt_api_key.txt", 'r').read()
         self.service = build('youtube', 'v3', developerKey=self.api_key)
         YtApiWrapper.readQuotaFile()
-        self.nextSearchTokens = dict()  # key: channelId, value: token #TODO: Load this value from a file
+        self.nextSearchTokens = dict()  # key: channelId, value: token
+        self.readFileSearchToken()
 
     # region Utility
     def resetSearchTokenForChannel(self, channel_id):
         self.nextSearchTokens[channel_id] = None
     #endregion
+
+    def updateSearchTokenForChannel(self,_channel_id,_token):
+        self.nextSearchTokens[_channel_id] = _token
+        
+    def updateFileSearchToken(self):
+        with open(YtApiWrapper.PATH_FILE_TOKEN, "w") as outfile:
+            json.dump(self.nextSearchTokens, outfile)
+        outfile.close()
+
+    def readFileSearchToken(self):
+        if os.path.exists(YtApiWrapper.PATH_FILE_TOKEN):
+            with open(YtApiWrapper.PATH_FILE_TOKEN, "r") as readfile:
+                self.nextSearchTokens = json.load(readfile)
+            readfile.close()
+        else:
+            self.nextSearchTokens = dict()
+            self.updateFileSearchToken()
 
     #region Main functionality
     def getAsManyVideosOf(self, channel_id):
@@ -36,7 +58,7 @@ class YtApiWrapper:
                     response = request.execute()
                     responses.append(response)
                     next_page_token = response.get('nextPageToken')
-                    self.nextSearchTokens[channel_id] = next_page_token
+                    self.updateSearchTokenForChannel(channel_id, next_page_token)
                     if not next_page_token:  # No more pages
                         self.resetSearchTokenForChannel(channel_id)
                         break

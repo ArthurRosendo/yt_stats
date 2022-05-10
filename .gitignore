@@ -154,4 +154,5 @@ cython_debug/
 
 current_quota.txt
 yt_api_key.txt
+search_token.json
 data.json
