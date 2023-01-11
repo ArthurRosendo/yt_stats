@@ -63,6 +63,7 @@ class YtApiWrapper:
                         self.resetSearchTokenForChannel(channel_id)
                         break
                 else:
+                    print("Could not consume API.")
                     break # Quit the loop if it can't consume
         except HttpError as e:
             print('Error response status code : {0}, reason : {1}'.format(e.status_code, e.error_details))
@@ -94,6 +95,7 @@ class YtApiWrapper:
             YtApiWrapper.updateQuotaFile()
             return True
         else:
+            print("Current quota is less than the API cost for an API operation")
             return False
 
     @staticmethod

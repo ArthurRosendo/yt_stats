@@ -6,12 +6,12 @@ import scipy.stats
 class Analysis:
 
     @staticmethod
-    def listToArray(_x):
+    def listToArray(_x: list):
         if _x is list:
             return numpy.array(_x)
 
     @staticmethod
-    def correlationCoefficient(_x, _y):
+    def correlationCoefficient(_x:list, _y:list):
         _x = Analysis.listToArray(_x)
         _y = Analysis.listToArray(_y)
 
@@ -21,7 +21,7 @@ class Analysis:
             raise Exception("Invalid argument(s) type for correlationCoefficient() of Analysis class")
 
     @staticmethod
-    def pearsonCoefficient(_x, _y):
+    def pearsonCoefficient(_x:list, _y:list):
         ''' Pearson's R '''
         _x = Analysis.listToArray(_x)
         _y = Analysis.listToArray(_y)
@@ -32,7 +32,7 @@ class Analysis:
             raise Exception("Invalid argument(s) type for correlationCoefficient() of Analysis class")
 
     @staticmethod
-    def spearmanCoefficient(_x, _y):
+    def spearmanCoefficient(_x:list, _y:list):
         ''' Spearman's Rho'''
         _x = Analysis.listToArray(_x)
         _y = Analysis.listToArray(_y)
@@ -44,7 +44,7 @@ class Analysis:
             raise Exception("Invalid argument(s) type for correlationCoefficient() of Analysis class")
 
     @staticmethod
-    def kendallCoefficient(_x, _y):
+    def kendallCoefficient(_x:list, _y:list):
         ''' Kendall's Tau'''
         _x = Analysis.listToArray(_x)
         _y = Analysis.listToArray(_y)
