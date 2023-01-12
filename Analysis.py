@@ -7,18 +7,9 @@ class Analysis:
 
     @staticmethod
     def listToArray(_x: list):
+        ''' list to numpy array '''
         if _x is list:
             return numpy.array(_x)
-
-    @staticmethod
-    def correlationCoefficient(_x:list, _y:list):
-        _x = Analysis.listToArray(_x)
-        _y = Analysis.listToArray(_y)
-
-        if _x is ndarray and _y is ndarray:
-            return numpy.corrcoef(_x, _y)
-        else:
-            raise Exception("Invalid argument(s) type for correlationCoefficient() of Analysis class")
 
     @staticmethod
     def pearsonCoefficient(_x:list, _y:list):

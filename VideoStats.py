@@ -15,4 +15,5 @@ class VideoStats:
         self.commentCount = commentCount
 
     def setDatetimeNow(self):
+        ''' Set the datetime to now in UTC timezone'''
         self.datetime = datetime.now(timezone.utc)

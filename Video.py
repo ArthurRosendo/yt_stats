@@ -1,17 +1,16 @@
+from chat_downloader import ChatDownloader
+
 from VideoStats import VideoStats
+from YtApiWrapper import YtApiWrapper
 
 
 class Video:
-    def validateResponse(self, _videoItem):
-        if 'kind' in _videoItem:
-            if _videoItem['kind'] != 'youtube#video':
-                raise Exception("Invalid argument for Video, provided response is not of kind 'youtube#video'. If you inserted a search response please pass just the part of the response that corresponds to the video item.")
-        else:
-            raise Exception("Was not able to find 'kind' in response, provided argument is likely not a valid Youtube Data Api response")
+
+    api = YtApiWrapper(open("yt_api_key.txt", 'r').read())
+
 
     def __init__(self, _videoItem):
-
-        self.validateResponse(_videoItem)
+        ''' Constructor for video that takes a response of kind youtube#video'''
 
         self.id = _videoItem['id']
         self.channel_id = _videoItem['snippet']['channelId']
@@ -31,7 +30,10 @@ class Video:
         current_stats = VideoStats(self.id, _videoItem['statistics']['viewCount'], _videoItem['statistics']['likeCount'], _videoItem['statistics']['favoriteCount'], _videoItem['statistics']['commentCount'])
         self.stats = self.stats.append(current_stats)
 
+        self.chat = None
+
     def getThumbnailUrl(self, _videoItem):
+        '''Returns url of the widest resolution thumbnail'''
         widest = 0
         widest_key = None
         for key in _videoItem['snippet']['thumbnails'].keys():
@@ -40,3 +42,13 @@ class Video:
                 widest = current_key_width
                 widest_key = key
         return _videoItem['snippet']['thumbnails'][widest_key]['url']
+
+    def retrieveChat(self):
+        ''' Downloads chat for past broadcasts'''
+        if self.chat is None:
+            print("Downloading chat for " + self.title + "...")
+            chat_downloader = ChatDownloader()
+            #Note: this doens't require API calls
+            self.chat = chat_downloader.get_chat(url=f"https://youtube.com/watch?v="+self.id, message_types=['text_message', 'paid_message', 'membership_item', 'paid_sticker','sponsorships_gift_purchase_announcement'])
+            print("Finished downloading")
+        return self.chat
